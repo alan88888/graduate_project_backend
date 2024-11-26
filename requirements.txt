@@ -4,3 +4,4 @@ pydantic
 pymysql
 transformers
 google-generativeai
+psycopg2
