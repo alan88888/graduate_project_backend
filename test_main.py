@@ -1,4 +1,7 @@
 import asyncio
+import psycopg2
+from psycopg2.extras import RealDictCursor
+import logging
 from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -30,12 +33,43 @@ app.add_middleware(
     allow_headers=["*"],  # 允许的请求头
 )
 
-mysql_config = {
-    "host": "localhost",
-    "user": "root",
-    "password": "alan875",  # 修改为您的密码
-    "database": "project_db",
+# PostgreSQL 配置
+postgresql_config = {
+    "host": "dpg-ct2o7apu0jms738tpuq0-a.oregon-postgres.render.com",        # 替換為你的 PostgreSQL 主機
+    "user": "project_db_ziah_user",         # 替換為你的 PostgreSQL 用戶
+    "password": "vf1kGvA6XBFqS0V0rxzpjjVbiPFt5VIQ",  # 替換為你的 PostgreSQL 密碼
+    "database": "project_db_ziah" # 替換為你的資料庫名稱
 }
+
+# 建立連線到 PostgreSQL 的函數
+def connect_to_postgresql():
+    try:
+        conn = psycopg2.connect(
+            host=postgresql_config["host"],
+            user=postgresql_config["user"],
+            password=postgresql_config["password"],
+            database=postgresql_config["database"]
+        )
+        return conn
+    except Exception as e:
+        logging.error(f"Failed to connect to PostgreSQL database: {e}")
+        raise HTTPException(status_code=500, detail="Failed to connect to PostgreSQL database")
+def analysis(sequence_to_classify:str):
+    output = classifier(sequence_to_classify, get_adj(), multi_label=False)
+    print(output)
+    return(output)
+accumulated_scores = {}
+questionlog = []
+analysis_status = {}
+ownneedrecord = {}
+questionlist = []
+#question_index = 0
+usenumber = []
+
+game3apiuse = 0
+
+# Session handling - To store user-specific data
+user_sessions = {}
 
 class sentence(BaseModel):
     action: str
@@ -50,31 +84,6 @@ class ownneed(BaseModel):
     areacheck: list
     doorcheck: list
     groupcheck: list
-
-# Session handling - To store user-specific data
-user_sessions = {}
-
-def connect_to_mysql():
-    try:
-        conn = pymysql.connect(**mysql_config)
-        return conn
-    except Exception as e:
-        logging.error(f"Failed to connect to MySQL database: {e}")
-        raise HTTPException(status_code=500, detail="Failed to connect to database")
-
-def analysis(sequence_to_classify:str):
-    output = classifier(sequence_to_classify, get_adj(), multi_label=False)
-    print(output)
-    return(output)
-accumulated_scores = {}
-questionlog = []
-analysis_status = {}
-ownneedrecord = {}
-questionlist = []
-#question_index = 0
-usenumber = []
-
-game3apiuse = 0
 
 def connect_to_gemini(question):
     global game3apiuse
