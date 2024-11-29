@@ -253,8 +253,8 @@ def index():
         with conn.cursor() as cursor:
             cursor.execute("SELECT VERSION()")
             version = cursor.fetchone()
-        logging.debug(f"Database connection successful! MySQL version: {version[0]}")
-        return JSONResponse(content={"message": f"Database connection successful! MySQL version: {version[0]}"})
+        logging.debug(f"Database connection successful! SQL version: {version[0]}")
+        return JSONResponse(content={"message": f"Database connection successful! SQL version: {version[0]}"})
     except Exception as e:
         logging.error(f"Failed to connect to database: {e}")
         raise HTTPException(status_code=500, detail="Failed to connect to database")
