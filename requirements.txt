@@ -5,3 +5,4 @@ pymysql
 transformers
 google-generativeai
 psycopg2
+pandas
