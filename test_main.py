@@ -167,7 +167,7 @@ def create_session():
     return session_id
 def personality_analysis(sentence):
     try:
-        conn = connect_to_mysql()
+        conn = connect_to_postgresql()
         with conn.cursor() as cursor:
             cursor.execute("SELECT adj FROM adj_table")
             adj = cursor.fetchall()
@@ -192,7 +192,7 @@ load_game3questions()
 
 def get_adj():
     try:
-        conn = connect_to_mysql()
+        conn = connect_to_postgresql()
         with conn.cursor() as cursor:
             cursor.execute("SELECT adj FROM adj_table")
             adj = cursor.fetchall()
@@ -249,7 +249,7 @@ def bestdept_sql_query(traits):
 @app.get("/")
 def index():
     try:
-        conn = connect_to_mysql()
+        conn = connect_to_postgresql()
         with conn.cursor() as cursor:
             cursor.execute("SELECT VERSION()")
             version = cursor.fetchone()
@@ -417,7 +417,7 @@ async def match_school_traits(request: Request, ignore_personal: bool = False, s
     else:
         raise HTTPException(status_code=400, detail="Session-ID is required")
 
-    conn = connect_to_mysql()
+    conn = connect_to_postgresql()
     cursor = conn.cursor()
 
     trait_names = list(top5_accumulated_scores.keys())
@@ -490,7 +490,7 @@ async def match_dept_traits(request: Request, ignore_personal: bool = False, ses
         raise HTTPException(status_code=400, detail="Session-ID is required")
 
     # 連接 MySQL 資料庫
-    conn = connect_to_mysql()
+    conn = connect_to_postgresql()
     cursor = conn.cursor()
 
     # 獲取所有特徵名稱 (top5)
@@ -592,7 +592,7 @@ async def match_overall_traits(request: Request, ignore_personal: bool = False, 
     bestdept_records = bestdept_results["sorted_results_with_scores"]
 
     # Step 2: 连接 MySQL，获取 sql_combine 中的 school_name 和 department_name
-    conn = connect_to_mysql()
+    conn = connect_to_postgresql()
     cursor = conn.cursor()
 
     # 查询 sql_combine 表中 school_name 和 department_name 的数据
@@ -696,7 +696,7 @@ async def match_overall_traits(request: Request, ignore_personal: bool = False, 
 @app.get("/location")
 def get_locations():
     try:
-        conn = connect_to_mysql()
+        conn = connect_to_postgresql()
         with conn.cursor() as cursor:
             cursor.execute("SELECT DISTINCT main_campus FROM sql_school")
             locations = cursor.fetchall()
@@ -710,7 +710,7 @@ def get_locations():
 @app.get("/env")
 def get_envs():
     try:
-        conn = connect_to_mysql()
+        conn = connect_to_postgresql()
         with conn.cursor() as cursor:
             cursor.execute("SELECT DISTINCT environment FROM sql_school")
             envs = cursor.fetchall()
@@ -724,7 +724,7 @@ def get_envs():
 @app.get("/area")
 def get_areas():
     try:
-        conn = connect_to_mysql()
+        conn = connect_to_postgresql()
         with conn.cursor() as cursor:
             cursor.execute("SELECT DISTINCT domain_name FROM sql_combine")
             areas = cursor.fetchall()
@@ -738,7 +738,7 @@ def get_areas():
 @app.get("/door")
 def get_doors():
     try:
-        conn = connect_to_mysql()
+        conn = connect_to_postgresql()
         with conn.cursor() as cursor:
             cursor.execute("SELECT DISTINCT discipline_name FROM sql_combine")
             doors = cursor.fetchall()
@@ -752,7 +752,7 @@ def get_doors():
 @app.get("/group")
 def get_groups():
     try:
-        conn = connect_to_mysql()
+        conn = connect_to_postgresql()
         with conn.cursor() as cursor:
             cursor.execute("SELECT DISTINCT academic_category_name FROM sql_combine")
             groups = cursor.fetchall()
@@ -773,7 +773,7 @@ def top5adj(request: Request):
     top5_keys = [item[0] for item in top5]
     top5_values = [item[1] for item in top5]
 
-    conn = connect_to_mysql()
+    conn = connect_to_postgresql()
     with conn.cursor() as cursor:
         cursor.execute("SELECT * FROM adj_table")
         adj = cursor.fetchall()
